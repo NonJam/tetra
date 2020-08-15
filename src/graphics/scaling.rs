@@ -150,7 +150,7 @@ impl ScreenScaler {
     ///
     /// This is a shortcut for calling `.project(input::get_mouse_position(ctx))`.
     pub fn mouse_position(&self, ctx: &Context) -> Vec2<f32> {
-        self.project(input::get_mouse_position(ctx))
+        self.project(input::get_mouse_position(&ctx.input))
     }
 
     /// Returns the X co-ordinate of the mouse in scaled screen co-ordinates.
@@ -160,7 +160,7 @@ impl ScreenScaler {
         let width = self.canvas().width();
 
         project_impl(
-            input::get_mouse_x(ctx),
+            input::get_mouse_x(&ctx.input),
             self.screen_rect.x,
             self.screen_rect.width,
             width as f32,
@@ -174,7 +174,7 @@ impl ScreenScaler {
         let height = self.canvas().height();
 
         project_impl(
-            input::get_mouse_y(ctx),
+            input::get_mouse_y(&ctx.input),
             self.screen_rect.y,
             self.screen_rect.height,
             height as f32,

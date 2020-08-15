@@ -379,7 +379,7 @@ where
                 }
 
                 if let Some(key) = into_key(k) {
-                    input::set_key_down(ctx, key);
+                    input::set_key_down(&mut ctx.input, key);
                     state.event(ctx, Event::KeyPressed { key })?;
                 }
             }
@@ -390,28 +390,28 @@ where
                 if let Some(key) = into_key(k) {
                     // TODO: This can cause some inputs to be missed at low tick rates.
                     // Could consider buffering input releases like Otter2D does?
-                    input::set_key_up(ctx, key);
+                    input::set_key_up(&mut ctx.input, key);
                     state.event(ctx, Event::KeyReleased { key })?;
                 }
             }
 
             SdlEvent::MouseButtonDown { mouse_btn, .. } => {
                 if let Some(button) = into_mouse_button(mouse_btn) {
-                    input::set_mouse_button_down(ctx, button);
+                    input::set_mouse_button_down(&mut ctx.input, button);
                     state.event(ctx, Event::MouseButtonPressed { button })?;
                 }
             }
 
             SdlEvent::MouseButtonUp { mouse_btn, .. } => {
                 if let Some(button) = into_mouse_button(mouse_btn) {
-                    input::set_mouse_button_up(ctx, button);
+                    input::set_mouse_button_up(&mut ctx.input, button);
                     state.event(ctx, Event::MouseButtonReleased { button })?;
                 }
             }
 
             SdlEvent::MouseMotion { x, y, .. } => {
                 let position = Vec2::new(x as f32, y as f32);
-                input::set_mouse_position(ctx, position);
+                input::set_mouse_position(&mut ctx.input, position);
                 state.event(ctx, Event::MouseMoved { position })?;
             }
 
@@ -423,7 +423,7 @@ where
                     _ => Vec2::new(x, y),
                 };
 
-                input::apply_mouse_wheel_movement(ctx, amount);
+                input::apply_mouse_wheel_movement(&mut ctx.input, amount);
                 state.event(ctx, Event::MouseWheelMoved { amount })?
             }
 
@@ -450,7 +450,7 @@ where
 
                 let haptic = ctx.window.haptic_sys.open_from_joystick_id(which).ok();
                 let id = controller.instance_id();
-                let slot = input::add_gamepad(ctx, id);
+                let slot = input::add_gamepad(&mut ctx.input, id);
 
                 ctx.window.controllers.insert(
                     id,
@@ -466,7 +466,7 @@ where
 
             SdlEvent::ControllerDeviceRemoved { which, .. } => {
                 let controller = ctx.window.controllers.remove(&which).unwrap();
-                input::remove_gamepad(ctx, controller.slot);
+                input::remove_gamepad(&mut ctx.input, controller.slot);
 
                 state.event(
                     ctx,
@@ -478,7 +478,7 @@ where
 
             SdlEvent::ControllerButtonDown { which, button, .. } => {
                 if let Some(slot) = ctx.window.controllers.get(&which).map(|c| c.slot) {
-                    if let Some(pad) = input::get_gamepad_mut(ctx, slot) {
+                    if let Some(pad) = input::get_gamepad_mut(&mut ctx.input, slot) {
                         let button = button.into();
 
                         pad.set_button_down(button);
@@ -489,7 +489,7 @@ where
 
             SdlEvent::ControllerButtonUp { which, button, .. } => {
                 if let Some(slot) = ctx.window.controllers.get(&which).map(|c| c.slot) {
-                    if let Some(pad) = input::get_gamepad_mut(ctx, slot) {
+                    if let Some(pad) = input::get_gamepad_mut(&mut ctx.input, slot) {
                         let button = button.into();
 
                         // TODO: This can cause some inputs to be missed at low tick rates.
@@ -504,7 +504,7 @@ where
                 which, axis, value, ..
             } => {
                 if let Some(slot) = ctx.window.controllers.get(&which).map(|c| c.slot) {
-                    if let Some(pad) = input::get_gamepad_mut(ctx, slot) {
+                    if let Some(pad) = input::get_gamepad_mut(&mut ctx.input, slot) {
                         let axis = axis.into();
 
                         let mapped_value = if value > 0 {
@@ -568,7 +568,7 @@ where
                                 Event::GamepadStickMoved {
                                     id: slot,
                                     stick,
-                                    position: input::get_gamepad_stick_position(ctx, slot, stick),
+                                    position: input::get_gamepad_stick_position(&ctx.input, slot, stick),
                                 },
                             )?;
                         }

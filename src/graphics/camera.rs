@@ -3,6 +3,7 @@ use crate::input;
 use crate::math::{Mat4, Vec2, Vec3};
 use crate::window;
 use crate::Context;
+use crate::input::InputContext;
 
 /// A camera that can be used to transform the player's view of the scene.
 ///
@@ -123,9 +124,9 @@ impl Camera {
     /// Returns the mouse's position in camera co-ordinates.
     ///
     /// This is a shortcut for calling `project(input::get_mouse_position(ctx))`.
-    /// As such, it does not take into account any other transformations
     /// being made to the view (e.g. screen scaling).
-    pub fn mouse_position(&self, ctx: &Context) -> Vec2<f32> {
+    /// As such, it does not take into account any other transformations
+    pub fn mouse_position(&self, ctx: &InputContext) -> Vec2<f32> {
         self.project(input::get_mouse_position(ctx))
     }
 
@@ -134,7 +135,7 @@ impl Camera {
     /// This is a shortcut for calling `project(input::get_mouse_position(ctx)).x`.
     /// As such, it does not take into account any other transformations
     /// being made to the view (e.g. screen scaling).
-    pub fn mouse_x(&self, ctx: &Context) -> f32 {
+    pub fn mouse_x(&self, ctx: &InputContext) -> f32 {
         self.mouse_position(ctx).x
     }
 
@@ -143,7 +144,7 @@ impl Camera {
     /// This is a shortcut for calling `project(input::get_mouse_position(ctx)).y`.
     /// As such, it does not take into account any other transformations
     /// being made to the view (e.g. screen scaling).
-    pub fn mouse_y(&self, ctx: &Context) -> f32 {
+    pub fn mouse_y(&self, ctx: &InputContext) -> f32 {
         self.mouse_position(ctx).y
     }
 

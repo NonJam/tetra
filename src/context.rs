@@ -142,6 +142,11 @@ impl Context {
 
         Ok(())
     }
+
+    /// Returns the InputContext that Context uses 
+    pub fn input_context(&mut self) -> &InputContext {
+        &self.input
+    }
 }
 
 /// Settings that can be configured when starting up a game.

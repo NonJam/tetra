@@ -36,7 +36,9 @@ pub use gamepad::*;
 pub use keyboard::*;
 pub use mouse::*;
 
-pub(crate) struct InputContext {
+#[derive(Debug, Clone, PartialEq)]
+/// Holder type for data relating to input
+pub struct InputContext {
     keys_down: HashSet<Key>,
     keys_pressed: HashSet<Key>,
     keys_released: HashSet<Key>,
